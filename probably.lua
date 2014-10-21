@@ -4,9 +4,8 @@
 ProbablyEngine = {
   addonName = "Probably",
   addonColor = "EE2200",
-  version = "6.0.2r5"
+  version = "6.0.2r6"
 }
-DiesalLibs = true
 
 function ProbablyEngine.print(message)
   print('|c00'..ProbablyEngine.addonColor..'['..ProbablyEngine.addonName..']|r ' .. message)
