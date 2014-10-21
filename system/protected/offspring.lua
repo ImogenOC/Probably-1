@@ -3,7 +3,7 @@
 
 -- Functions that require OffSpring
 
-ProbablyEngine.timeout.set('offspring', 1, function()
+function ProbablyEngine.protected.OffSpring()
 
 	if oexecute then
 
@@ -77,8 +77,10 @@ ProbablyEngine.timeout.set('offspring', 1, function()
 			end
 		end
 
+		ProbablyEngine.protected.unlocked = true
+		ProbablyEngine.timer.unregister('detectUnlock')
 	    ProbablyEngine.print('Detected ' .. ProbablyEngine.pmethod .. "!")
 
 	end
 
-end)
+end

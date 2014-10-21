@@ -16,6 +16,7 @@ ProbablyEngine.cycle = function(skip_verify)
     and ProbablyEngine.module.player.combat
     and ProbablyEngine.config.read('button_states', 'MasterToggle', false)
     and ProbablyEngine.module.player.specID
+    and (ProbablyEngine.protected.unlocked or IsMacClient())
 
   if cycle or skip_verify then
     
@@ -92,6 +93,7 @@ ProbablyEngine.ooc_cycle = function()
     and ProbablyEngine.config.read('button_states', 'MasterToggle', false)
     and ProbablyEngine.module.player.specID ~= 0
     and ProbablyEngine.rotation.activeOOCRotation ~= false
+    and (ProbablyEngine.protected.unlocked or IsMacClient())
 
   if cycle then
     local spell, target = ''
@@ -147,3 +149,11 @@ end
 ProbablyEngine.timer.register("oocrotation", function()
   ProbablyEngine.ooc_cycle()
 end, ProbablyEngine.cycleTime)
+
+
+if IsWindowsClient() then
+  ProbablyEngine.timer.register("detectUnlock", function()
+    ProbablyEngine.protected.FireHack()
+    ProbablyEngine.protected.OffSpring()
+  end, 1000)
+end

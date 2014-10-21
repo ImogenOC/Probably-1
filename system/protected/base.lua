@@ -8,7 +8,9 @@ FaceUnit = false
 IterateObjects = false
 LineOfSight = false
 
-ProbablyEngine.pmethod = false
+ProbablyEngine.protected = {
+	unlocked = false
+}
 
 function Cast(spell, target)
 	if type(spell) == "number" then
