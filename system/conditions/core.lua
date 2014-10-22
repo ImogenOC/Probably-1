@@ -883,14 +883,20 @@ end)
 ProbablyEngine.condition.register("vengeance", function(unit, spell)
     local vengeance = select(15, _G['UnitBuff']("player", GetSpellName(132365)))
     if not vengeance then
-    return 0
+        return 0
     end
-
     if spell then
-    return vengeance
+        return vengeance
     end
-
     return vengeance / UnitHealthMax("player") * 100
+end)
+
+ProbablyEngine.condition.register("area.enemies", function(unit, distance)
+    if UnitsAroundUnit then
+        local total = UnitsAroundUnit(unit, tonumber(distance))
+        return total
+    end
+    return 0
 end)
 
 ProbablyEngine.condition.register("ilevel", function(unit, _)
