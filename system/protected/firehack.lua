@@ -7,6 +7,8 @@ function ProbablyEngine.protected.FireHack()
 
     if FireHack then
 
+        local stickyValue = GetCVar("deselectOnClick")
+
         ProbablyEngine.pmethod = "FireHack"
 
         function IterateObjects(callback, ...)
@@ -85,14 +87,28 @@ function ProbablyEngine.protected.FireHack()
             return true
         end
 
-        local CastGroundOld = CastGround
         function CastGround(spell, target)
             if UnitExists(target) then
               CastSpellByName(spell)
               CastAtPosition(ObjectPosition(target))
               return
             end
-            CastGroundOld(spell, target) -- try the old one ?
+
+            if not ProbablyEngine.timeout.check('groundCast') then
+                ProbablyEngine.timeout.set('groundCast', 0.05, function()
+                    Cast(spell)
+                    if IsAoEPending() then
+                        SetCVar("deselectOnClick", "0")
+                        CameraOrSelectOrMoveStart(1)
+                        CameraOrSelectOrMoveStop(1)
+                        SetCVar("deselectOnClick", "1")
+                        SetCVar("deselectOnClick", stickyValue)
+                        CancelPendingSpell()
+                    end
+                end)
+            end
+            
+
         end
 
         ProbablyEngine.protected.unlocked = true
