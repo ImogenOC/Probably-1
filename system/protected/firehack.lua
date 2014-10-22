@@ -96,6 +96,7 @@ function ProbablyEngine.protected.FireHack()
         end
 
         ProbablyEngine.protected.unlocked = true
+        ProbablyEngine.protected.method = "firehack"
         ProbablyEngine.timer.unregister('detectUnlock')
         ProbablyEngine.print('Detected ' .. ProbablyEngine.pmethod .. "!")
 
