@@ -6,7 +6,7 @@
 ProbablyEngine.protected.generic_check = false
 
 function ProbablyEngine.protected.Generic()
-	do
+	if not ProbablyEngine.protected.method then
 		pcall(RunMacroText, "/run ProbablyEngine.protected.generic_check = true")
 		if ProbablyEngine.protected.generic_check then
 			ProbablyEngine.protected.unlocked = true
