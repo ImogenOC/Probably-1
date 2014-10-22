@@ -47,6 +47,7 @@
   <Script file="system\protected\base.lua" />
   <Script file="system\protected\firehack.lua" />
   <Script file="system\protected\offspring.lua" />
+  <Script file="system\protected\generic.lua" />
 
   <!-- Conditions -->
   <Script file="system\conditions\core.lua" />

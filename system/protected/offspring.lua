@@ -80,7 +80,7 @@ function ProbablyEngine.protected.OffSpring()
 		ProbablyEngine.protected.unlocked = true
 		ProbablyEngine.protected.method = "offspring"
 		ProbablyEngine.timer.unregister('detectUnlock')
-	    ProbablyEngine.print('Detected ' .. ProbablyEngine.pmethod .. "!")
+	    ProbablyEngine.print('Detected OffSpring!')
 
 	end
 

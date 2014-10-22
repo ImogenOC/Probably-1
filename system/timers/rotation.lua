@@ -151,9 +151,10 @@ ProbablyEngine.timer.register("oocrotation", function()
 end, ProbablyEngine.cycleTime)
 
 
-if IsWindowsClient() then
-  ProbablyEngine.timer.register("detectUnlock", function()
+ProbablyEngine.timer.register("detectUnlock", function()
+  if ProbablyEngine.config.read('button_states', 'MasterToggle', false) then
     ProbablyEngine.protected.FireHack()
     ProbablyEngine.protected.OffSpring()
-  end, 1000)
-end
+    ProbablyEngine.protected.Generic()
+  end
+end, 1000)
