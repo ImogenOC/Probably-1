@@ -759,10 +759,12 @@ ProbablyEngine.condition.register("deathin", function(target, range)
         local hpps = diff / dura
         local death = currentHP / hpps
         if death == math.huge then
-            death = 8675309
+            return 8675309
+        elseif death < 0 then
+            return 0
+        else
+            return death
         end
-        print(hpps, death)
-        return death
     elseif deathTrack[target] then
         table.empty(deathTrack[target])
     else
