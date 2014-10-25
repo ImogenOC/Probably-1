@@ -61,7 +61,14 @@ ProbablyEngine.cycle = function(skip_verify)
           Macro("/target " .. target)
           target = "target"
         end
-        Cast(name, target or "target")
+
+        -- some spells just won't cast normally, so we use macros
+        if spellID == 139139 then -- Insanity for spriests
+          Macro('/cast ' .. GetSpellName(15407))
+        else
+          Cast(name, target or "target")
+        end
+
         if spellID == 110309 then
           Macro("/targetlasttarget")
         end
