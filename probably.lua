@@ -3,6 +3,7 @@
 
 ProbablyEngine = {
   addonName = "Probably",
+  addonReal = "Probably",
   addonColor = "EE2200",
   version = "6.0.2r7"
 }

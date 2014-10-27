@@ -9,7 +9,7 @@ ProbablyEngine.listener.register("ADDON_LOADED", function(...)
 
   local addon = ...
 
-  if addon ~= ProbablyEngine.addonName then return end
+  if addon ~= ProbablyEngine.addonReal then return end
 
   -- load all our config data
   ProbablyEngine.config.load(ProbablyEngine_ConfigData)
