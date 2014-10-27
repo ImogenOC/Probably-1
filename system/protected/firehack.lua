@@ -91,9 +91,9 @@ function ProbablyEngine.protected.FireHack()
             if UnitExists(target) then
               CastSpellByName(spell)
               CastAtPosition(ObjectPosition(target))
+              CancelPendingSpell()
               return
             end
-
             if not ProbablyEngine.timeout.check('groundCast') then
                 ProbablyEngine.timeout.set('groundCast', 0.05, function()
                     Cast(spell)
@@ -107,8 +107,6 @@ function ProbablyEngine.protected.FireHack()
                     end
                 end)
             end
-            
-
         end
 
         ProbablyEngine.protected.unlocked = true
