@@ -80,10 +80,8 @@ local function Symbol(prototype)
       end
 
       if first.arguments then
-        print('>> ', first.condition, first.target, unpack(first.arguments))
         first = ProbablyEngine.condition[first.condition](first.target, unpack(first.arguments))
       else
-        print('>> ', first.condition, first.target, action)
         first = ProbablyEngine.condition[first.condition](first.target, action)
       end
     end

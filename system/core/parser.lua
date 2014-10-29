@@ -201,7 +201,6 @@ end
 local horribleCache = {}
 
 local function parse(rule, action)
-  print(' -- ' .. rule)
   local fn = horribleCache[rule]
   if not fn then
     fn = ProbablyEngine.ruleParser.parse(rule)
@@ -221,16 +220,12 @@ local function parse(rule, action)
     end
   
     if result.arguments then
-      print('>> ', result.condition, result.target, unpack(result.arguments))
       result = ProbablyEngine.condition[result.condition](result.target, unpack(result.arguments))
     else
-      print('>> ', result.condition, result.target, action)
       result = ProbablyEngine.condition[result.condition](result.target, action)
     end
   end
 
-  print('Result: ', result)
-  print(' ----------------------------------------- ')
   return result
 end
 
