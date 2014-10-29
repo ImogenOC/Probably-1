@@ -28,6 +28,7 @@
   <Script file="interface\locale\zhCN.lua" />
 
   <!-- Core System -->
+  <Script file="system\core\lexer.lua" />
   <Script file="system\core\debug.lua" />
   <Script file="system\core\config.lua" />
   <Script file="system\core\module.lua" />
