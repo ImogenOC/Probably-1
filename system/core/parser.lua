@@ -198,10 +198,54 @@ ProbablyEngine.parser.nested = function(evaluationTable, event, target)
   return true
 end
 
+local function parse(rule, action)
+  print(' -- ' .. rule)
+  local fn = ProbablyEngine.ruleParser.parse(rule)
+  local ok, result = pcall(fn.evaluate, fn, action)
+  
+  if not ok then
+    return false
+  end
+
+  -- #TODO: Refactor
+  if type(result) == 'table' and result.condition then
+    if ProbablyEngine.condition[result.condition] == nil then
+      print('#ERROR condition not found', result.condition)
+      return
+    end
+  
+    if result.arguments then
+      print('>> ', result.condition, result.target, unpack(result.arguments))
+      result = ProbablyEngine.condition[result.condition](result.target, unpack(result.arguments))
+    else
+      print('>> ', result.condition, result.target, action)
+      result = ProbablyEngine.condition[result.condition](result.target, action)
+    end
+  end
+
+  print('Result: ', result)
+  print(' ----------------------------------------- ')
+  return result
+end
+
+local function evaluateRule(obj, action)
+  if type(obj) == 'string' then
+    return parse(obj, action)
+  elseif type(obj) == 'function' then
+    return obj(action)
+  elseif type(obj) == 'table' then
+    for i = 1, #obj do
+      if i ~= #obj then
+        if not evaluateRule(obj[i], action) then return false end
+      else
+        return evaluateRule(obj[i], action)
+      end
+    end
+  end
+end
+
 ProbablyEngine.parser.table = function(spellTable, fallBackTarget)
-
   for _, arguments in pairs(spellTable) do
-
     ProbablyEngine.dsl.parsedTarget = nil
 
     local eventType = type(arguments[1])
@@ -249,10 +293,8 @@ ProbablyEngine.parser.table = function(spellTable, fallBackTarget)
     end
 
     if eventType == "string" or eventType == "number" then
-      if evaluationType == "string"  then
-        evaluation = ProbablyEngine.dsl.parse(evaluation, event)
-      elseif evaluationType == "table" then
-        evaluation = ProbablyEngine.parser.nested(evaluation, event, target)
+      if evaluationType == "string" or evaluationType == "table" then
+        evaluation = evaluateRule(evaluation, event)
       elseif evaluationType == "function" then
         evaluation = evaluation()
       elseif evaluationType == "library" then
@@ -261,10 +303,8 @@ ProbablyEngine.parser.table = function(spellTable, fallBackTarget)
         evaluation = true
       end
     elseif eventType == "table" or eventType == "macro" or eventType == "item" then
-      if evaluationType == "string"  then
-        evaluation = ProbablyEngine.dsl.parse(evaluation, '')
-      elseif evaluationType == "table" then
-        evaluation = ProbablyEngine.parser.nested(evaluation, '', target)
+      if evaluationType == "string" or evaluationType == "table" then
+        evaluation = evaluateRule(evaluation, '')
       elseif evaluationType == "function" then
         evaluation = evaluation()
       elseif evaluationType == "library" then
