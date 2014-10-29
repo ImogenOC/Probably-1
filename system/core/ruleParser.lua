@@ -174,20 +174,25 @@ function Period:led(left, expression, verify, token)
   return self
 end
 function Period:evaluate(action)
+  if self.cache then return self.cache end
+
   local first = self.first and self.first:evaluate(action)
   local second = self.second and self.second:evaluate(action)
 
   if self.first.class == 'root' and self.second.class == 'condition' then
     if self.first.value == 'modifier' then
-      return { target = nil, condition = self.first.value .. '.' .. second }
+      self.cache = { target = nil, condition = self.first.value .. '.' .. second }
     else
-      return { target = self.first.value, condition = second }
+      self.cache = { target = self.first.value, condition = second }
     end
+
+    return self.cache
   end
 
   if type(first) == 'table' and first.condition then
     first.condition = first.condition .. '.' .. second
-    return first
+    self.cache = first
+    return self.cache
   end
 
   if first == nil then
@@ -371,6 +376,8 @@ function LeftParathesis:led(left, expression, verify, token)
   return self
 end
 function LeftParathesis:evaluate(action)
+  if self.cache then return self.cache end
+
   local arguments = {}
   for i = 1, #self.second.value do
     arguments[#arguments + 1] = self.second.value[i][1]:evaluate(action) -- #REVIEW
@@ -379,6 +386,7 @@ function LeftParathesis:evaluate(action)
   local first = self.first:evaluate(action)
   if type(first) == 'table' and first.condition then
     first.arguments = arguments
+    self.cache = first
     return first
   elseif type(first) ~= 'function' then
     print('#TODO Eval', type(first))
