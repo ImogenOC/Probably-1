@@ -198,9 +198,15 @@ ProbablyEngine.parser.nested = function(evaluationTable, event, target)
   return true
 end
 
+local horribleCache = {}
+
 local function parse(rule, action)
   print(' -- ' .. rule)
-  local fn = ProbablyEngine.ruleParser.parse(rule)
+  local fn = horribleCache[rule]
+  if not fn then
+    fn = ProbablyEngine.ruleParser.parse(rule)
+    horribleCache[rule] = fn
+  end
   local ok, result = pcall(fn.evaluate, fn, action)
   
   if not ok then
