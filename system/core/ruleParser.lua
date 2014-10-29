@@ -133,12 +133,23 @@ function Identifier:evaluate()
   return self.value
 end
 
-local Library = Symbol({ id = '@' })
+local function leftMost(left)
+  if left.first then
+    leftMost(left.first)
+  else
+    left.library = true
+  end
+end
+
+local Library = Symbol({ id = '@', lbp = 50 })
 function Library:nud(expression)
+  self.first = expression(self.lbp)
+  leftMost(self.first)
+  self.second = nil
   return self
 end
 function Library:evaluate()
-  print('TODO: Library')
+  return self.first:eval(action)
 end
 
 local function checkLeft(left)
@@ -178,6 +189,10 @@ function Period:evaluate(action)
   local second = self.second and self.second:evaluate(action)
 
   if self.first.class == 'root' and self.second.class == 'condition' then
+    if self.first.library then
+      return ProbablyEngine.library.libs[self.first.value]
+    end
+
     if self.first.value == 'modifier' then
       self.cache = { target = nil, condition = self.first.value .. '.' .. second }
     else
