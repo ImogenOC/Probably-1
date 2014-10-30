@@ -117,6 +117,14 @@ function ProbablyEngine.protected.FireHack()
             return UseItemByName(name, target)
         end
 
+        function Cast(spell, target)
+            if type(spell) == "number" then
+                CastSpellByID(spell, target)
+            else
+                CastSpellByName(spell, target)
+            end
+        end
+
         ProbablyEngine.protected.unlocked = true
         ProbablyEngine.protected.method = "firehack"
         ProbablyEngine.timer.unregister('detectUnlock')
