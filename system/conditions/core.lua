@@ -798,7 +798,10 @@ ProbablyEngine.condition.register("combat", function(target, range)
 end)
 
 ProbablyEngine.condition.register("time", function(target, range)
-    return GetTime() - ProbablyEngine.module.player.combatTime
+    if ProbablyEngine.module.player.combatTime then
+        return GetTime() - ProbablyEngine.module.player.combatTime
+    end
+    return false
 end)
 
 
