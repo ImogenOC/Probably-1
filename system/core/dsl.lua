@@ -19,6 +19,8 @@ end
 
 ProbablyEngine.dsl.comparator = function(condition, target, condition_spell)
 
+  if not condition then return false end
+
   local modify_not = false
 
   -- lol fuck off line 24...
