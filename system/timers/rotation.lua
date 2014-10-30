@@ -7,6 +7,44 @@ ProbablyEngine.current_spell = false
 
 ProbablyEngine.cycleTime = ProbablyEngine.cycleTime or 50
 
+
+-- faceroll
+
+ProbablyEngine.faceroll.faceroll = function()
+  if ProbablyEngine.faceroll.rolling then
+    local spell, target
+    if ProbablyEngine.module.player.combat then
+      spell, target = ProbablyEngine.parser.table(ProbablyEngine.rotation.activeRotation)
+    elseif not ProbablyEngine.module.player.combat then
+      spell, target = ProbablyEngine.parser.table(ProbablyEngine.rotation.activeOOCRotation, 'player')
+    end
+    
+    if spell then
+      local spellIndex, spellBook = GetSpellBookIndex(spell)
+      local spellID, name, icon
+      if spellBook ~= nil then
+        _, spellID = GetSpellBookItemInfo(spellIndex, spellBook)
+        name, _, icon, _, _, _, _, _, _ = GetSpellInfo(spellIndex, spellBook)
+      else
+        spellID = spellIndex
+        name, _, icon, _, _, _, _, _, _ = GetSpellInfo(spellID)
+      end
+      if UnitExists(target) or target == 'ground' or string.sub(target, -7) == ".ground" then
+        ProbablyEngine.buttons.icon('MasterToggle', icon)
+        ProbablyEngine.current_spell = name
+      else
+        ProbablyEngine.current_spell = false
+      end
+    else
+      ProbablyEngine.current_spell = false
+    end
+  end
+end
+
+ProbablyEngine.timer.register("faceroll", function()
+  ProbablyEngine.faceroll.faceroll()
+end, 50)
+
 ProbablyEngine.cycle = function(skip_verify)
 
   local turbo = ProbablyEngine.config.read('pe_turbo', false)

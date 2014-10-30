@@ -109,6 +109,14 @@ function ProbablyEngine.protected.FireHack()
             end
         end
 
+        function Macro(text)
+            return RunMacroText(text)
+        end
+
+        function UseItem(name, target)
+            return UseItemByName(name, target)
+        end
+
         ProbablyEngine.protected.unlocked = true
         ProbablyEngine.protected.method = "firehack"
         ProbablyEngine.timer.unregister('detectUnlock')
