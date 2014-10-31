@@ -33,7 +33,13 @@ local test_config = {
 		},
 		{
 			type = 'text',
-			text = "Example text block." },
+			text = "Example text block."
+		},
+		{
+			type = 'text',
+			text = "Some Smaller text, because why not.",
+			size = 8
+		},
 		{
 			type = "checkbox",
 			text = "Example Check",
@@ -58,7 +64,7 @@ local test_config = {
 			type = "dropdown",
 			text = "Dropdown",
 			key = "dropdown1",
-			combo = {
+			list = {
 				{
 					text = "Some Value",
 					key = "value1"
@@ -159,7 +165,7 @@ function buildElements(table, parent)
 			tmp:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset)
 			tmp:SetText(element.text)
 			tmp:SetJustifyH('LEFT')
-			tmp:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
+			tmp:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), element.size or 10)
 			tmp:SetWidth(parent.content:GetWidth()-10)
 
 			element.offset = tmp:GetStringHeight()
@@ -209,7 +215,7 @@ function buildElements(table, parent)
 
 			tmp:SetChecked(ProbablyEngine.config.read(table.key .. '_' .. element.key, element.default or false))
 
-			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			local tmp_text = table.window:CreateRegion("FontString", 'name', parent.content)
 			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
@@ -229,7 +235,7 @@ function buildElements(table, parent)
 				ProbablyEngine.config.write(table.key .. '_' .. element.key, number)
 			end)
 
-			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			local tmp_text = table.window:CreateRegion("FontString", 'name', parent.content)
 			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 8, offset-2)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
@@ -261,7 +267,7 @@ function buildElements(table, parent)
 
 			tmp_check:SetChecked(ProbablyEngine.config.read(table.key .. '_' .. element.key .. '_check', element.default_check or false))
 
-			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			local tmp_text = table.window:CreateRegion("FontString", 'name', parent.content)
 			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset-2)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
@@ -274,12 +280,12 @@ function buildElements(table, parent)
 			tmp_list:SetParent(parent.content)
 			tmp_list:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset)
 			local orderdKeys = { }
-			local combo = { }
-			for i, value in pairs(element.combo) do
+			local list = { }
+			for i, value in pairs(element.list) do
 				orderdKeys[i] = value.key
-				combo[value.key] = value.text
+				list[value.key] = value.text
 			end
-			tmp_list:SetList(combo, orderdKeys)
+			tmp_list:SetList(list, orderdKeys)
 
 			tmp_list:SetEventListener('OnValueChanged', function(this, event, value)
 				ProbablyEngine.config.write(table.key .. '_' .. element.key, value)
@@ -287,7 +293,7 @@ function buildElements(table, parent)
 
 			tmp_list:SetValue(ProbablyEngine.config.read(table.key .. '_' .. element.key, element.default))
 
-			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			local tmp_text = table.window:CreateRegion("FontString", 'name', parent.content)
 			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-3)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
@@ -322,7 +328,7 @@ function buildElements(table, parent)
 		elseif element.type == 'texture' then
 			offset = offset + -(element.offset or 0)
 		elseif element.type == "text" then
-			offset = offset + -(element.offset) - 10
+			offset = offset + -(element.offset) - (element.size or 10)
 		elseif element.type == 'button' then
 			offset = offset + -20
 		else
@@ -337,8 +343,8 @@ end
 function ProbablyEngine.interface.buildGUI(config)
 
 	local parent = DiesalGUI:Create('Window')
-	parent:SetWidth(200)
-	parent:SetHeight(300)
+	parent:SetWidth(config.width or 200)
+	parent:SetHeight(config.height or 300)
 
 	local window = DiesalGUI:Create('ScrollFrame')
 	window:SetParent(parent.content)
@@ -358,11 +364,18 @@ function ProbablyEngine.interface.buildGUI(config)
 		parent:SetHeight(config.height)
 	end
 
+	config.window = window
+
 	buildElements(config, window)
 
 	return window
 
 end
+
+ProbablyEngine.timer.register('gui', function()
+	ProbablyEngine.interface.buildGUI(test_config)
+	ProbablyEngine.timer.unregister('gui')
+end, 200)
 
 ProbablyEngine.interface.init = function()
 	ProbablyEngine.interface.minimap.create()
