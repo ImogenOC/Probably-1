@@ -336,11 +336,11 @@ end
 
 function ProbablyEngine.interface.buildGUI(config)
 
-	parent = DiesalGUI:Create('Window')
+	local parent = DiesalGUI:Create('Window')
 	parent:SetWidth(200)
 	parent:SetHeight(300)
 
-	window = DiesalGUI:Create('ScrollFrame')
+	local window = DiesalGUI:Create('ScrollFrame')
 	window:SetParent(parent.content)
 	window:SetAllPoints(parent.content)
 
@@ -358,9 +358,9 @@ function ProbablyEngine.interface.buildGUI(config)
 		parent:SetHeight(config.height)
 	end
 
-	config._elements = { } -- a place to store the frames
-
 	buildElements(config, window)
+
+	return window
 
 end
 
