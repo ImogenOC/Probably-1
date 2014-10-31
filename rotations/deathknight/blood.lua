@@ -1,4 +1,4 @@
--- SPEC ID 250
+-- SPEC ID 250, aka the Blood Death Knight
 ProbablyEngine.rotation.register(250, {
 --Racials
 -- Dwarves
