@@ -7,6 +7,8 @@ function ProbablyEngine.protected.FireHack()
 
     if FireHack then
 
+        ProbablyEngine.faceroll.rolling = false
+
         local stickyValue = GetCVar("deselectOnClick")
 
         ProbablyEngine.pmethod = "FireHack"

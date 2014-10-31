@@ -7,6 +7,8 @@ function ProbablyEngine.protected.OffSpring()
 
 	if oexecute then
 
+		ProbablyEngine.faceroll.rolling = false
+
 		ProbablyEngine.pmethod = "OffSpring"
 
 		function Cast(spell, target)
