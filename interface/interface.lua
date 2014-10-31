@@ -372,10 +372,10 @@ function ProbablyEngine.interface.buildGUI(config)
 
 end
 
-ProbablyEngine.timer.register('gui', function()
+--[[ProbablyEngine.timer.register('gui', function()
 	ProbablyEngine.interface.buildGUI(test_config)
 	ProbablyEngine.timer.unregister('gui')
-end, 200)
+end, 200)]]
 
 ProbablyEngine.interface.init = function()
 	ProbablyEngine.interface.minimap.create()
