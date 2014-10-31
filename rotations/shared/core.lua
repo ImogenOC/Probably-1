@@ -1,5 +1,11 @@
 ProbablyEngine.rotation.shared = {
-	-- Shared spells for all rotations
+{ "#5512", "player.health < 70"},
+{ "nil", "modifier.cooldowns"},
+{ "nil", "modifier.cooldowns"},
+{ "nil", "modifier.cooldowns"},
+{ "nil", "modifier.cooldowns"},
+{ "nil", "modifier.cooldowns"},
+{ "nil", "modifier.cooldowns"},{ "nil", "modifier.cooldowns"},
 }
 
 
