@@ -1,143 +1,155 @@
 -- SPEC ID 250
 ProbablyEngine.rotation.register(250, {
+--Racials
+-- Dwarves
+{ "20594", "player.health <= 65" },
+-- Humans
+{ "59752", "player.state.charm" },
+{ "59752", "player.state.fear" },
+{ "59752", "player.state.incapacitate" },
+{ "59752", "player.state.sleep" },
+{ "59752", "player.state.stun" },
+-- Draenei
+{ "28880", "player.health <= 70", "player" },
+-- Gnomes
+{ "20589", "player.state.root" },
+{ "20589", "player.state.snare" },
+-- Forsaken
+{ "7744", "player.state.fear" },
+{ "7744", "player.state.charm" },
+{ "7744", "player.state.sleep" },
+-- Goblins
+{ "69041", "player.moving" },
 
-  --------------------
-  -- Start Rotation --
-  --------------------
+-- Buffs
+{ "48263", "player.seal != 1", nil }, -- Blood
+{ "49222", "!player.buff(49222)" }, -- bone shield
 
-  -- Keybinds
-  { "Death and Decay", "modifier.shift", "ground" },
+-- Keybinds
+{ "42650", "modifier.alt" }, -- Army of the Dead
+{ "49576", "modifier.control" }, -- Death Grip
+{ "43265", "modifier.shift", "target.ground" }, -- Death and Decay
 
-  -- Defensives and Buffing
-  { "Bone Shield", "player.buff(Bone Shield).charges < 1" },
+-- items
+{ "#5512", "player.health < 70"}, --healthstone
 
-  -- Battle Rez, Mouseover w/ Cooldowns Mod
-  { "Raise Ally", {
-    "modifier.cooldowns",
-    "!mouseover.alive",
-  }, "mouseover" },
+-- Defensive Cooldowns
+{ "48792", "player.health <= 40"  "player')" }, -- Icebound Fortitude
+{ "55233", "player.health <= 40" }, -- Vampiric Blood
+{ "48743", "player.health <= 50" }, -- Death Pact
+-- Lichborne (Fear)
+{ "49039", { 
+  "player.state.fear", 
+  "player.runicpower >= 40", 
+  "player.spell.exists(49039)" }},
+-- Lichborne (Sleep)
+{ "49039", { 
+  "player.state.sleep", 
+  "player.runicpower >= 40", 
+  "player.spell.exists(49039)",
+}},
+-- Lichborne (Charm)
+{ "49039", { 
+  "toggle.defcd", 
+  "player.state.charm", 
+  "player.runicpower >= 40", 
+  "player.spell.exists(49039)",
+}},
 
-  -- Interrupts
-  { "Mind Freeze", "modifier.interrupts" },
-  { "Strangulate", "modifier.interrupts" },
+{ "48982", { "toggle.defcd", "player.health <= 60" }}, -- rune tap
+{ "108196", { "toggle.defcd","player.health < 60" }},-- Death Siphon
 
-  -- Threat Control w/ Toggle
-  { "Dark Command", {
-    "toggle.tc",
-    "mouseover.threat < 100",
-  }, "mouseover" },
+-- Cooldowns
+{ "49028", "modifier.cooldowns", "target" }, -- Dancing Rune Weapon
+-- Empower Rune Weapon
+{ "47568", { 
+  "modifier.cooldowns", 
+  "player.runes(death).count < 1", 
+  "player.runes(frost).count < 1", 
+  "player.runes(unholy).count < 1", 
+  "player.runicpower < 30",
+}},
+{ "115989", { "modifier.cooldowns","target.debuff(55095)" }}, -- Unholy Blight
+{ "115989", { "modifier.cooldowns","target.debuff(55078)" }}, -- Unholy Blight
 
-  { "Dark Command", {
-    "toggle.tc",
-    "target.threat < 100",
-  }, "target" },
+-- Interrupts
+{ "47528", { "target.interruptsAt(50)", "modifier.interrupts" }, "target" }, -- Mind freeze
+{ "47476", { 
+  "target.interruptsAt(50)", 
+  "modifier.interrupts", 
+  "!player.modifier.last(47528)",
+}, "target" }, -- Strangulate
+{ "108194", { "target.interruptsAt(50)", "!modifier.last(47528)" }, "target" }, -- Asphyxiate
 
-  { "Death Grip", {
-    "toggle.tc",
-    "mouseover.threat < 100",
-  }, "mouseover" },
+-- Plague Leech
+{ "123693", {
+  "target.debuff(55095)",-- Target With Frost Fever
+  "target.debuff(55078)",-- Target With Blood Plague
+  "player.runes(unholy).count = 0",-- With 0 Unholy Runes
+  "player.runes(frost).count = 0",-- With 0 Frost Runes
+  "player.runes(death).count = 0",-- With 0 Death Runes
+  "!modifier.last"
+}}, 
 
-  { "Death Grip", {
-    "toggle.tc",
-    "target.threat < 100"
-  }, "target" },
+-- Diseases
+{ "77575", "target.debuff(55095).duration < 2" }, -- Outbreak
+{ "77575", "target.debuff(55078).duration < 2" }, -- Outbreak
+{ "45462", "target.debuff(55078).duration < 2", "target" }, -- Plague Strike
+{ "45477", "target.debuff(55095).duration < 2", "target" }, -- Icy Touch
 
-  -- Survival
-  { "Anti-Magic Shell", {
-    "player.health <= 70",
-	  "target.casting"
-  }},
+{ "48721", { -- Blood Boil // blod
+  "player.runes(blood).count > 1",
+  "target.debuff(55095).duration < 3", 
+  "target.debuff(55078).duration <3",
+}},
 
-  { "Dancing Rune Weapon", "player.health <= 75" },
-  { "Conversion", "player.health <= 60" },
-  { "Vampiric Blood", "player.health <= 55" },
-  { "Icebound Fortitude", "player.health <= 50" },
-  { "Rune Tap", "player.health <= 40" },
-  { "Empower Rune Weapon", "player.health <= 40" },
+{ "48721", {  -- Blood Boil // death
+  "player.runes(death).count > 1",
+  "target.debuff(55095).duration < 3", 
+  "target.debuff(55078).duration <3",
+}},
 
-  -- Death Pact Macro, Last Resort
-  { "/cast Raise Dead\n/cast Death Pact", {
-    "player.health < 35",
-    "player.spell(Death Pact).cooldown",
-    "player.spell(Raise Dead).cooldown",
-    "player.spell(Death Pact).usable",
-  }},
+-- Multi-target
+{ "50842",  "UnitsAroundUnit(player, 10[, 5])"}, -- Blood Boil
+{ "50842",  {"modifier.multitarget","target.range <= 10" }}, -- Blood Boil
 
-  -- Blood Tap Control
-  { "Blood Tap", "player.buff(Blood Charge).count >= 5" },
+-- Rotation
+{ "50842",  {"player.buff(Crimson Scourge)","target.range <= 10" }}, -- Blood Boil
+{ "47541", "player.runicpower >= 90", "target" }, -- Death Coil // Full runic
+{ "49998", { "player.buff(77513).duration <= 1" }, "target" }, -- Death Strike
+{ "114866", "target.health <= 35", "target" }, -- Soul Reaper
+{ "50842",  { "target.range <= 10", "!target.health <= 35" }}, -- Blood Boil
 
-  -- Disease Control
-  { "Outbreak", {
-    "target.debuff(Frost Fever).duration < 3",
-    "target.debuff(Blood Plague).duration <3",
-  }, "target" },
+{ "50842",  { 
+  "player.runes(blood).count = 1", 
+  "target.range <= 10", 
+  "target.health <= 35",
+}},
 
-  { "Blood Boil", {
-    "player.runes(blood).count > 1",
-    "target.debuff(Frost Fever).duration < 3",
-    "target.debuff(Blood Plague).duration <3",
-    "target.range <= 10",
-  }},
+{ "47541", "player.runicpower >= 30", "target" }, -- Death Coil
 
-  { "Blood Boil", {
-    "player.runes(death).count > 1",
-    "target.debuff(Frost Fever).duration < 3",
-    "target.debuff(Blood Plague).duration <3",
-    "target.range <= 10",
-  }},
+-- Blood Tap
+{{
+  { "45529", "player.runes(unholy).count = 0" }, --Blood Tap
+  { "45529", "player.runes(frost).count = 0" }, -- Blood Tap
+  { "45529", "player.runes(blood).count = 0" }, -- Blood Tap
+} , {
+  "player.buff(Blood Charge).count >= 5",
+  "player.runes(death).count = 0",
+  "!modifier.last",
+}},{
 
-  { "Icy Touch", "target.debuff(Frost Fever).duration < 3" },
-  { "Plague Strike", "target.debuff(Blood Plague).duration < 3" },
+-- OOC --
+-- Keybinds
+{ "42650", {"modifier.alt", "target.exits"} }, -- Army of the Dead
+{ "49576", "modifier.control" }, -- Death Grip
+{ "43265", "modifier.shift", "target.ground" }, -- Death and Decay
+{ "43265", "modifier.shift", "target.ground" }, -- Death and Decay
 
-  -- AoE Rotation
-  { "Pestilence", {
-    "target.debuff(Blood Plague",
-    "target.debuff(Frost Fever)",
-  }},
+-- Buffs
+{ "48263", { "player.seal != 1 ", "!toggle.run" }},
+{ "48265", { "player.seal != 3", "toggle.run" }},
+{ "49222", "!player.buff(49222)" },
+{ "57330", "!player.buff(57330)" },
 
-  { "Death Strike", "modifier.multitarget" },
-
-  { "Blood Boil", {
-    "modifier.multitarget",
-    "target.range <= 10"
-  }},
-
-  { "Rune Strike", "modifier.multitarget" },
-
-  -- Rotation
-  { "Soul Reaper", {
-    "player.runes(blood).count >= 1",
-	  "target.health < 35",
-  }},
-
-  { "Heart Strike", "player.runes(blood).count >= 1" },
-  { "Death Strike", "!modifier.last(Death Strike)" },
-  { "Rune Strike", "player.runicpower >= 40" },
-
-  ------------------
-  -- End Rotation --
-  ------------------
-
-},{
-
-  ---------------
-  -- OOC Begin --
-  ---------------
-
-    -- Buffs
-  { "Horn of Winter", "!player.buff(Horn of Winter)" },
-  { "Path of Frost", "!player.buff(Path of Frost).any" },
-  { "Bone Shield", "player.buff(Bone Shield).charges < 1" },
-
-  -- Keybinds
-  { "Army of the Dead", "modifier.alt" },
-  { "Death Grip", "modifier.control" },
-
-  -------------
-  -- OOC End --
-  -------------
-
-  },
- function ()
-  ProbablyEngine.toggle.create('tc', 'Interface\\Icons\\ability_deathwing_bloodcorruption_death', 'Threat Control', '')
-  end)
+},)
