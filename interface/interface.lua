@@ -9,65 +9,55 @@ local DiesalGUI = LibStub("DiesalGUI-1.0")
 local DiesalMenu = LibStub("DiesalMenu-1.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 
-local config = {
-	key = "test",
-	title = "|cffee2200ProbablyEngine|r Config",
+local test_config = {
+	key = "testconf",
+	title = "Example Config",
+	subtitle = "It's awesome!",
+	color = "005522",
 	width = 200,
 	height = 300,
 	config = {
 		{
-			type = "header",
-			text = "A Test Config",
+			type = 'header',
+			text = 'Example Header'
 		},
 		{ type = 'rule' },
 		{
-			type = "checkbox",
-			text = "Checked Box",
-			default = false
+			type = "texture",
+			texture = "Interface/TARGETINGFRAME/UI-RaidTargetingIcon_8",
+			width = 32,
+			height = 32,
+			offset = 34,
+			y = 12,
+			center = true
 		},
 		{
-			type = "checkbox",
-			text = "Box Check",
-			default = false
-		},
-		{ type = 'rule' },
+			type = 'text',
+			text = "Example text block." },
 		{
 			type = "checkbox",
-			text = "OJ Did It",
-			default = true
+			text = "Example Check",
+			key = "check1",
+			default = false
 		},
 		{
 			type = "spinner",
-			text = "A Num Value",
+			text = "Simple Spinner",
+			key = "spin1",
 			default = 25
 		},
 		{
-			type = "spinner",
-			text = "Another Num",
-			default = 75
-		},
-		{
-			type = "checkbox",
-			text = "Some Value",
-			default = true
-		},
-		{ type = 'rule' },
-		{
 			type = "checkspin",
-			text = "Its Both",
-			default_bool = true,
-			default_spin = 40
-		},
-		{
-			type = "checkspin",
-			text = "How Awesome",
-			default_bool = true,
+			text = "Spinner Check",
+			key = "checkspin1",
+			default_check = true,
 			default_spin = 100
 		},
 		{ type = 'rule' },
 		{
-			type = "combo",
-			text = "Combo #5",
+			type = "dropdown",
+			text = "Dropdown",
+			key = "dropdown1",
 			combo = {
 				{
 					text = "Some Value",
@@ -77,40 +67,102 @@ local config = {
 					text = "Other Value",
 					key = "value2"
 				}
-			}
-		}
+			},
+			default = "value1"
+		},
+		{
+			type = "button",
+			text = "A Button",
+			width = 75,
+			height = 15,
+			callback = function()
+				print('It Works!')
+			end
+		},
 }}
 
-function buildGUI(config)
 
-	window = DiesalGUI:Create('Window')
-	window:SetWidth(200)
-	window:SetHeight(300)
+local buttonStyleSheet = {
+	['frame-color'] = {	
+		type			= 'texture',
+		layer			= 'BACKGROUND',								
+		color			= '2f353b',			
+		offset		= 0,	
+	},
+	['frame-highlight'] = {
+		type			= 'texture',
+		layer			= 'BORDER',
+		gradient	= 'VERTICAL',							
+		color			= 'FFFFFF',			
+		alpha 		= 0,
+		alphaEnd	= .1,
+		offset		= -1,
+	},	
+	['frame-outline'] = {		
+		type			= 'outline',
+		layer			= 'BORDER',								
+		color			= '000000',		
+		offset		= 0,		
+	},	
+	['frame-inline'] = {		
+		type			= 'outline',
+		layer			= 'BORDER',
+		gradient	= 'VERTICAL',
+		color			= 'ffffff',
+		alpha 		= .02,
+		alphaEnd	= .09,
+		offset		= -1,
+	},	
+	['frame-hover'] = {		
+		type			= 'texture',
+		layer			= 'HIGHLIGHT',	
+		color			= 'ffffff',
+		alpha			= .1,
+		offset		= 0,	
+	},
+	['text-color'] = {
+		type			= 'Font',
+		color			= 'b8c2cc',
+	},
+}
+local spinnerStyleSheet = {
+	['bar-background'] = {			
+		type			= 'texture',
+		layer			= 'BORDER',								
+		color			= 'ee2200',			
+	},
+}
 
-	if config.title then
-		window:SetTitle(config.title)
-	end
-	if config.width then
-		window:SetWidth(config.width)
-	end
-	if config.height then
-		window:SetHeight(config.height)
-	end
-
-	config._elements = { } -- a place to store the frames
+function buildElements(table, parent)
 
 	local offset = -5
 
-	for _, element in ipairs(config.config) do
+	for _, element in ipairs(table.config) do
 
 		if element.type == 'header' then
 
-			local tmp = window:CreateRegion("FontString", 'name', window.content)
-			tmp:SetPoint("TOPLEFT", window.content, "TOPLEFT", 5, offset)
+			local tmp = parent:CreateRegion("FontString", 'name', parent.content)
+			tmp:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset)
 			tmp:SetText(element.text)
 			tmp:SetJustifyH('LEFT')
 			tmp:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 13)
-			tmp:SetWidth(window.content:GetWidth()-10)
+			tmp:SetWidth(parent.content:GetWidth()-10)
+			
+			if element.align then
+				tmp:SetJustifyH(strupper(element.align))
+			end
+
+		elseif element.type == 'text' then
+
+			local tmp = parent:CreateRegion("FontString", 'name', parent.content)
+			tmp:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset)
+			tmp:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset)
+			tmp:SetText(element.text)
+			tmp:SetJustifyH('LEFT')
+			tmp:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
+			tmp:SetWidth(parent.content:GetWidth()-10)
+
+			element.offset = tmp:GetStringHeight()
 			
 			if element.align then
 				tmp:SetJustifyH(strupper(element.align))
@@ -119,70 +171,108 @@ function buildGUI(config)
 		elseif element.type == 'rule' then
 
 			local tmp = CreateFrame('Frame')
-			tmp:SetParent(window.content)
-			tmp:SetPoint('TOPLEFT', window.content, 'TOPLEFT', 5, offset-3)
-			tmp:SetWidth(window.content:GetWidth()-10)
+			tmp:SetParent(parent.content)
+			tmp:SetPoint('TOPLEFT', parent.content, 'TOPLEFT', 5, offset-3)
+			tmp:SetPoint('BOTTOMRIGHT', parent.content, 'BOTTOMRIGHT', -5, offset-3)
+			tmp:SetWidth(parent.content:GetWidth()-10)
 			tmp:SetHeight(1)
 			tmp.texture = tmp:CreateTexture()
 			tmp.texture:SetTexture(0,0,0,0.5)
 			tmp.texture:SetAllPoints(tmp)
 
+		elseif element.type == 'texture' then
+
+			local tmp = CreateFrame('Frame')
+			tmp:SetParent(parent.content)
+			if element.center then
+				tmp:SetPoint('CENTER', parent.content, 'CENTER', (element.x or 0), offset-(element.y or 0))
+			else
+				tmp:SetPoint('TOPLEFT', parent.content, 'TOPLEFT', 5+(element.x or 0), offset-3+(element.y or 0))
+			end
+			
+			tmp:SetWidth(parent:GetWidth()-10)
+			tmp:SetHeight(element.height)
+			tmp:SetWidth(element.width)
+			tmp.texture = tmp:CreateTexture()
+			tmp.texture:SetTexture(element.texture)
+			tmp.texture:SetAllPoints(tmp)
+
 		elseif element.type == 'checkbox' then
 
 			local tmp = DiesalGUI:Create('CheckBox')
-			tmp:SetParent(window.content)
-			tmp:SetPoint("TOPLEFT", window.content, "TOPLEFT", 5, offset)
+			tmp:SetParent(parent.content)
+			tmp:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset)
 
-			if element.default then
-				tmp:SetChecked(true)
-			end
+			tmp:SetEventListener('OnValueChanged', function(this, event, checked)
+				ProbablyEngine.config.write(table.key .. '_' .. element.key, checked)
+			end)
 
-			local tmp_text = window:CreateRegion("FontString", 'name', window.content)
-			tmp_text:SetPoint("TOPLEFT", window.content, "TOPLEFT", 20, offset)
+			tmp:SetChecked(ProbablyEngine.config.read(table.key .. '_' .. element.key, element.default or false))
+
+			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 
 		elseif element.type == 'spinner' then
 
-			local tmp = DiesalGUI:Create('Spinner')
-			tmp:SetParent(window.content)
-			tmp:SetPoint("TOPLEFT", window.content, "TOPRIGHT", -35, offset)
-			tmp:SetNumber(element.default)
+			local tmp_spin = DiesalGUI:Create('Spinner')
+			tmp_spin:SetParent(parent.content)
+			tmp_spin:SetPoint("TOPLEFT", parent.content, "TOPRIGHT", -35, offset)
+			tmp_spin:SetNumber(
+				ProbablyEngine.config.read(table.key .. '_' .. element.key, element.default)
+			)
+			tmp_spin:AddStyleSheet(spinnerStyleSheet)
 
-			local tmp_text = window:CreateRegion("FontString", 'name', window.content)
-			tmp_text:SetPoint("TOPLEFT", window.content, "TOPLEFT", 8, offset-2)
+			tmp_spin:SetEventListener('OnValueChanged', function(this, event, userInput, number)
+				if not userInput then return end
+				ProbablyEngine.config.write(table.key .. '_' .. element.key, number)
+			end)
+
+			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 8, offset-2)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 			tmp_text:SetJustifyH('LEFT')
-			tmp_text:SetWidth(window.content:GetWidth()-10)
+			tmp_text:SetWidth(parent.content:GetWidth()-10)
 
 		elseif element.type == 'checkspin' then
 
 			local tmp_spin = DiesalGUI:Create('Spinner')
-			tmp_spin:SetParent(window.content)
-			tmp_spin:SetPoint("TOPLEFT", window.content, "TOPRIGHT", -35, offset)
-			tmp_spin:SetNumber(element.default_spin)
+			tmp_spin:SetParent(parent.content)
+			tmp_spin:SetPoint("TOPLEFT", parent.content, "TOPRIGHT", -35, offset)
+			tmp_spin:SetNumber(
+				ProbablyEngine.config.read(table.key .. '_' .. element.key .. '_spin', element.default_spin or 0)
+			)
+			tmp_spin:AddStyleSheet(spinnerStyleSheet)
 
-			local tmp_spin = DiesalGUI:Create('CheckBox')
-			tmp_spin:SetParent(window.content)
-			tmp_spin:SetPoint("TOPLEFT", window.content, "TOPLEFT", 5, offset-2)
+			tmp_spin:SetEventListener('OnValueChanged', function(this, event, userInput, number)
+				if not userInput then return end
+				ProbablyEngine.config.write(table.key .. '_' .. element.key .. '_spin', number)
+			end)
 
-			if element.default_bool then
-				tmp_spin:SetChecked(true)
-			end
+			local tmp_check = DiesalGUI:Create('CheckBox')
+			tmp_check:SetParent(parent.content)
+			tmp_check:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-2)
 
-			local tmp_text = window:CreateRegion("FontString", 'name', window.content)
-			tmp_text:SetPoint("TOPLEFT", window.content, "TOPLEFT", 20, offset-2)
+			tmp_check:SetEventListener('OnValueChanged', function(this, event, checked)
+				ProbablyEngine.config.write(table.key .. '_' .. element.key .. '_check', checked)
+			end)
+
+			tmp_check:SetChecked(ProbablyEngine.config.read(table.key .. '_' .. element.key .. '_check', element.default_check or false))
+
+			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset-2)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 			tmp_text:SetJustifyH('LEFT')
-			tmp_text:SetWidth(window.content:GetWidth()-10)
+			tmp_text:SetWidth(parent.content:GetWidth()-10)
 
-		elseif element.type == 'combo' then
+		elseif element.type == 'combo' or element.type == 'dropdown' then
 
-			local tmp_list = DiesalGUI:Create('ComboBox')
-			tmp_list:SetParent(window.content)
-			tmp_list:SetPoint("TOPRIGHT", window.content, "TOPRIGHT", -5, offset)
+			local tmp_list = DiesalGUI:Create('Dropdown')
+			tmp_list:SetParent(parent.content)
+			tmp_list:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset)
 			local orderdKeys = { }
 			local combo = { }
 			for i, value in pairs(element.combo) do
@@ -191,12 +281,35 @@ function buildGUI(config)
 			end
 			tmp_list:SetList(combo, orderdKeys)
 
-			local tmp_text = window:CreateRegion("FontString", 'name', window.content)
-			tmp_text:SetPoint("TOPLEFT", window.content, "TOPLEFT", 5, offset-3)
+			tmp_list:SetEventListener('OnValueChanged', function(this, event, value)
+				ProbablyEngine.config.write(table.key .. '_' .. element.key, value)
+			end)
+
+			tmp_list:SetValue(ProbablyEngine.config.read(table.key .. '_' .. element.key, element.default))
+
+			local tmp_text = window:CreateRegion("FontString", 'name', parent.content)
+			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-3)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 			tmp_text:SetJustifyH('LEFT')
-			tmp_text:SetWidth(window.content:GetWidth()-10)
+			tmp_text:SetWidth(parent.content:GetWidth()-10)
+
+		elseif element.type == 'button' then
+
+			local tmp = DiesalGUI:Create("Button")
+			tmp:SetParent(parent.content)
+			tmp:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset)
+			tmp:SetText(element.text)
+			tmp:SetWidth(element.width)
+			tmp:SetHeight(element.height)
+
+			tmp:AddStyleSheet(buttonStyleSheet)
+
+			tmp:SetEventListener("OnClick", element.callback)
+			
+			if element.align then
+				tmp:SetJustifyH(strupper(element.align))
+			end
 
 		end
 
@@ -204,6 +317,14 @@ function buildGUI(config)
 			offset = offset + -10
 		elseif element.type == 'spinner' or element.type == 'checkspin' then
 			offset = offset + -19
+		elseif element.type == 'combo' or element.type == 'dropdown' then
+			offset = offset + -20
+		elseif element.type == 'texture' then
+			offset = offset + -(element.offset or 0)
+		elseif element.type == "text" then
+			offset = offset + -(element.offset) - 10
+		elseif element.type == 'button' then
+			offset = offset + -20
 		else
 			offset = offset + -16
 		end
@@ -213,7 +334,35 @@ function buildGUI(config)
 
 end
 
---buildGUI(config)
+function ProbablyEngine.interface.buildGUI(config)
+
+	parent = DiesalGUI:Create('Window')
+	parent:SetWidth(200)
+	parent:SetHeight(300)
+
+	window = DiesalGUI:Create('ScrollFrame')
+	window:SetParent(parent.content)
+	window:SetAllPoints(parent.content)
+
+	if not config.color then config.color = "ee2200" end
+
+	spinnerStyleSheet['bar-background']['color'] = config.color
+
+	if config.title then
+		parent:SetTitle("|cff"..config.color..config.title.."|r", config.subtitle)
+	end
+	if config.width then
+		parent:SetWidth(config.width)
+	end
+	if config.height then
+		parent:SetHeight(config.height)
+	end
+
+	config._elements = { } -- a place to store the frames
+
+	buildElements(config, window)
+
+end
 
 ProbablyEngine.interface.init = function()
 	ProbablyEngine.interface.minimap.create()
