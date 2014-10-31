@@ -13,9 +13,9 @@ ProbablyEngine.cycleTime = ProbablyEngine.cycleTime or 50
 ProbablyEngine.faceroll.faceroll = function()
   if ProbablyEngine.faceroll.rolling then
     local spell, target
-    if ProbablyEngine.module.player.combat then
+    if ProbablyEngine.module.player.combat and ProbablyEngine.rotation.activeRotation then
       spell, target = ProbablyEngine.parser.table(ProbablyEngine.rotation.activeRotation)
-    elseif not ProbablyEngine.module.player.combat then
+    elseif not ProbablyEngine.module.player.combat and ProbablyEngine.rotation.activeOOCRotation then
       spell, target = ProbablyEngine.parser.table(ProbablyEngine.rotation.activeOOCRotation, 'player')
     end
     
@@ -56,7 +56,7 @@ ProbablyEngine.cycle = function(skip_verify)
     and ProbablyEngine.module.player.specID
     and (ProbablyEngine.protected.unlocked or IsMacClient())
 
-  if cycle or skip_verify then
+  if cycle or skip_verify and ProbablyEngine.rotation.activeRotation then
     
     local spell, target = false
 
@@ -140,7 +140,7 @@ ProbablyEngine.ooc_cycle = function()
     and ProbablyEngine.rotation.activeOOCRotation ~= false
     and (ProbablyEngine.protected.unlocked or IsMacClient())
 
-  if cycle then
+  if cycle and ProbablyEngine.rotation.activeOOCRotation then
     local spell, target = ''
     spell, target = ProbablyEngine.parser.table(ProbablyEngine.rotation.activeOOCRotation, 'player')
 
