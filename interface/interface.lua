@@ -9,6 +9,58 @@ local DiesalGUI = LibStub("DiesalGUI-1.0")
 local DiesalMenu = LibStub("DiesalMenu-1.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 
+local test_data = {
+	key = "testdata",
+	title = "Player Position",
+	width = 250,
+	height = 105,
+	resize = false,
+	config = {
+		{
+			type = "text",
+			text = "X: ",
+			size = 20,
+			offset = -20
+		},
+		{
+			key = 'x',
+			type = "text",
+			text = "Random",
+			size = 20,
+			align = "right",
+			offset = 5
+		},
+		{
+			type = "text",
+			text = "Y: ",
+			size = 20,
+			offset = -20
+		},
+		{
+			key = 'y',
+			type = "text",
+			text = "Random",
+			size = 20,
+			align = "right",
+			offset = 5
+		},
+		{
+			type = "text",
+			text = "Z: ",
+			size = 20,
+			offset = -20
+		},
+		{
+			key = 'z',
+			type = "text",
+			text = "Random",
+			size = 20,
+			align = "right",
+			offset = 5
+		}
+	}
+}
+
 local test_config = {
 	key = "testconf",
 	title = "Example Config",
@@ -158,6 +210,10 @@ function buildElements(table, parent)
 				tmp:SetJustifyH(strupper(element.align))
 			end
 
+			if element.key then
+				table.window.elements[element.key] = tmp
+			end
+
 		elseif element.type == 'text' then
 
 			local tmp = parent:CreateRegion("FontString", 'name', parent.content)
@@ -168,11 +224,18 @@ function buildElements(table, parent)
 			tmp:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), element.size or 10)
 			tmp:SetWidth(parent.content:GetWidth()-10)
 
-			element.offset = tmp:GetStringHeight()
+			if not element.offset then
+				element.offset = tmp:GetStringHeight()
+			end
 			
 			if element.align then
 				tmp:SetJustifyH(strupper(element.align))
 			end
+
+			if element.key then
+				table.window.elements[element.key] = tmp
+			end
+			
 
 		elseif element.type == 'rule' then
 
@@ -185,6 +248,10 @@ function buildElements(table, parent)
 			tmp.texture = tmp:CreateTexture()
 			tmp.texture:SetTexture(0,0,0,0.5)
 			tmp.texture:SetAllPoints(tmp)
+
+			if element.key then
+				table.window.elements[element.key] = tmp
+			end
 
 		elseif element.type == 'texture' then
 
@@ -203,6 +270,10 @@ function buildElements(table, parent)
 			tmp.texture:SetTexture(element.texture)
 			tmp.texture:SetAllPoints(tmp)
 
+			if element.key then
+				table.window.elements[element.key] = tmp
+			end
+
 		elseif element.type == 'checkbox' then
 
 			local tmp = DiesalGUI:Create('CheckBox')
@@ -219,6 +290,11 @@ function buildElements(table, parent)
 			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
+
+			if element.key then
+				table.window.elements[element.key+'Text'] = tmp_text
+				table.window.elements[element.key] = tmp
+			end
 
 		elseif element.type == 'spinner' then
 
@@ -241,6 +317,11 @@ function buildElements(table, parent)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 			tmp_text:SetJustifyH('LEFT')
 			tmp_text:SetWidth(parent.content:GetWidth()-10)
+
+			if element.key then
+				table.window.elements[element.key+'Text'] = tmp_text
+				table.window.elements[element.key] = tmp_spin
+			end
 
 		elseif element.type == 'checkspin' then
 
@@ -274,6 +355,12 @@ function buildElements(table, parent)
 			tmp_text:SetJustifyH('LEFT')
 			tmp_text:SetWidth(parent.content:GetWidth()-10)
 
+			if element.key then
+				table.window.elements[element.key+'Text'] = tmp_text
+				table.window.elements[element.key+'Check'] = tmp_check
+				table.window.elements[element.key+'Spin'] = tmp_spin
+			end
+
 		elseif element.type == 'combo' or element.type == 'dropdown' then
 
 			local tmp_list = DiesalGUI:Create('Dropdown')
@@ -300,6 +387,11 @@ function buildElements(table, parent)
 			tmp_text:SetJustifyH('LEFT')
 			tmp_text:SetWidth(parent.content:GetWidth()-10)
 
+			if element.key then
+				table.window.elements[element.key+'Text'] = tmp_text
+				table.window.elements[element.key] = tmp_list
+			end
+
 		elseif element.type == 'button' then
 
 			local tmp = DiesalGUI:Create("Button")
@@ -315,6 +407,10 @@ function buildElements(table, parent)
 			
 			if element.align then
 				tmp:SetJustifyH(strupper(element.align))
+			end
+
+			if element.key then
+				table.window.elements[element.key] = tmp
 			end
 
 		end
@@ -363,8 +459,30 @@ function ProbablyEngine.interface.buildGUI(config)
 	if config.height then
 		parent:SetHeight(config.height)
 	end
+	if config.minWidth then
+		parent.settings.minWidth = config.minWidth
+	end
+	if config.minHeight then
+		parent.settings.minHeight = config.minHeight
+	end
+	if config.maxWidth then
+		parent.settings.maxWidth = config.maxWidth
+	end
+	if config.maxHeight then
+		parent.settings.maxHeight = config.maxHeight
+	end
+	if config.resize == false then
+		parent.settings.minHeight = config.height
+		parent.settings.minWidth = config.width
+		parent.settings.maxHeight = config.height
+		parent.settings.maxWidth = config.width
+	end
+
+	parent:ApplySettings()
 
 	config.window = window
+
+	window.elements = { }
 
 	buildElements(config, window)
 
@@ -375,7 +493,19 @@ end
 --[[ProbablyEngine.timer.register('gui', function()
 	ProbablyEngine.interface.buildGUI(test_config)
 	ProbablyEngine.timer.unregister('gui')
-end, 200)]]
+end, 200)
+
+local windowRef = ProbablyEngine.interface.buildGUI(test_data)
+
+function updatePositions()
+	local x, y, z = ObjectPosition('player')
+	windowRef.elements.x:SetText(math.round(x, 2))
+	windowRef.elements.y:SetText(math.round(y, 2))
+	windowRef.elements.z:SetText(math.round(z, 2))
+end
+
+C_Timer.NewTicker(0.01, updatePositions, nil)
+]]
 
 ProbablyEngine.interface.init = function()
 	ProbablyEngine.interface.minimap.create()
