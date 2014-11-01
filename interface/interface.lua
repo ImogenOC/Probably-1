@@ -559,12 +559,12 @@ function ProbablyEngine.interface.buildGUI(config)
 	return window
 
 end
-
+--[[
 ProbablyEngine.timer.register('gui', function()
 	ProbablyEngine.interface.buildGUI(test_config)
 	ProbablyEngine.timer.unregister('gui')
 end, 200)
---[[
+
 local windowRef = ProbablyEngine.interface.buildGUI(test_data)
 
 function updatePositions()
