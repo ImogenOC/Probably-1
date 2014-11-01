@@ -95,18 +95,21 @@ local test_config = {
 		{
 			type = "checkbox",
 			text = "Example Check",
+			desc = "This is a description for the checkbox!",
 			key = "check1",
 			default = false
 		},
 		{
 			type = "spinner",
 			text = "Simple Spinner",
+			desc = "This is a description for the spinner! This is a description for the spinner! This is a description for the spinner!",
 			key = "spin1",
 			default = 25
 		},
 		{
 			type = "checkspin",
 			text = "Spinner Check",
+			desc = "Blah blah blah, blah blah!",
 			key = "checkspin1",
 			default_check = true,
 			default_spin = 100
@@ -126,11 +129,13 @@ local test_config = {
 					key = "value2"
 				}
 			},
-			default = "value1"
+			default = "value1",
+			desc = "Chicken chicken chicken, chicken chicken!",
 		},
 		{
 			type = "button",
 			text = "A Button",
+			desc = "Buttons too, what the fuck.",
 			width = 75,
 			height = 15,
 			callback = function()
@@ -196,6 +201,8 @@ function buildElements(table, parent)
 	local offset = -5
 
 	for _, element in ipairs(table.config) do
+
+		local push, pull = 0, 0
 
 		if element.type == 'header' then
 
@@ -286,13 +293,24 @@ function buildElements(table, parent)
 
 			tmp:SetChecked(ProbablyEngine.config.read(table.key .. '_' .. element.key, element.default or false))
 
-			local tmp_text = table.window:CreateRegion("FontString", 'name', parent.content)
-			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset)
+			local tmp_text = table.window:CreateRegion("FontString", 'name1', parent.content)
+			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset-1)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 
+			if element.desc then
+				local tmp_desc = table.window:CreateRegion("FontString", 'name', parent.content)
+				tmp_desc:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-15)
+				tmp_desc:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset-15)
+				tmp_desc:SetText(element.desc)
+				tmp_desc:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 9)
+				tmp_desc:SetWidth(parent.content:GetWidth()-10)
+				tmp_desc:SetJustifyH('LEFT')
+				push = tmp_desc:GetStringHeight() + 5
+			end
+
 			if element.key then
-				table.window.elements[element.key+'Text'] = tmp_text
+				table.window.elements[element.key..'Text'] = tmp_text
 				table.window.elements[element.key] = tmp
 			end
 
@@ -312,14 +330,25 @@ function buildElements(table, parent)
 			end)
 
 			local tmp_text = table.window:CreateRegion("FontString", 'name', parent.content)
-			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 8, offset-2)
+			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-4)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 			tmp_text:SetJustifyH('LEFT')
 			tmp_text:SetWidth(parent.content:GetWidth()-10)
 
+			if element.desc then
+				local tmp_desc = table.window:CreateRegion("FontString", 'name', parent.content)
+				tmp_desc:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-18)
+				tmp_desc:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset-18)
+				tmp_desc:SetText(element.desc)
+				tmp_desc:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 9)
+				tmp_desc:SetWidth(parent.content:GetWidth()-10)
+				tmp_desc:SetJustifyH('LEFT')
+				push = tmp_desc:GetStringHeight() + 5
+			end
+
 			if element.key then
-				table.window.elements[element.key+'Text'] = tmp_text
+				table.window.elements[element.key..'Text'] = tmp_text
 				table.window.elements[element.key] = tmp_spin
 			end
 
@@ -349,16 +378,27 @@ function buildElements(table, parent)
 			tmp_check:SetChecked(ProbablyEngine.config.read(table.key .. '_' .. element.key .. '_check', element.default_check or false))
 
 			local tmp_text = table.window:CreateRegion("FontString", 'name', parent.content)
-			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset-2)
+			tmp_text:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 20, offset-4)
 			tmp_text:SetText(element.text)
 			tmp_text:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 10)
 			tmp_text:SetJustifyH('LEFT')
 			tmp_text:SetWidth(parent.content:GetWidth()-10)
 
+			if element.desc then
+				local tmp_desc = table.window:CreateRegion("FontString", 'name', parent.content)
+				tmp_desc:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-18)
+				tmp_desc:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset-18)
+				tmp_desc:SetText(element.desc)
+				tmp_desc:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 9)
+				tmp_desc:SetWidth(parent.content:GetWidth()-10)
+				tmp_desc:SetJustifyH('LEFT')
+				push = tmp_desc:GetStringHeight() + 5
+			end
+
 			if element.key then
-				table.window.elements[element.key+'Text'] = tmp_text
-				table.window.elements[element.key+'Check'] = tmp_check
-				table.window.elements[element.key+'Spin'] = tmp_spin
+				table.window.elements[element.key..'Text'] = tmp_text
+				table.window.elements[element.key..'Check'] = tmp_check
+				table.window.elements[element.key..'Spin'] = tmp_spin
 			end
 
 		elseif element.type == 'combo' or element.type == 'dropdown' then
@@ -387,8 +427,19 @@ function buildElements(table, parent)
 			tmp_text:SetJustifyH('LEFT')
 			tmp_text:SetWidth(parent.content:GetWidth()-10)
 
+			if element.desc then
+				local tmp_desc = table.window:CreateRegion("FontString", 'name', parent.content)
+				tmp_desc:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-18)
+				tmp_desc:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset-18)
+				tmp_desc:SetText(element.desc)
+				tmp_desc:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 9)
+				tmp_desc:SetWidth(parent.content:GetWidth()-10)
+				tmp_desc:SetJustifyH('LEFT')
+				push = tmp_desc:GetStringHeight() + 5
+			end
+
 			if element.key then
-				table.window.elements[element.key+'Text'] = tmp_text
+				table.window.elements[element.key..'Text'] = tmp_text
 				table.window.elements[element.key] = tmp_list
 			end
 
@@ -404,6 +455,17 @@ function buildElements(table, parent)
 			tmp:AddStyleSheet(buttonStyleSheet)
 
 			tmp:SetEventListener("OnClick", element.callback)
+
+			if element.desc then
+				local tmp_desc = table.window:CreateRegion("FontString", 'name', parent.content)
+				tmp_desc:SetPoint("TOPLEFT", parent.content, "TOPLEFT", 5, offset-element.height-3)
+				tmp_desc:SetPoint("TOPRIGHT", parent.content, "TOPRIGHT", -5, offset-element.height-3)
+				tmp_desc:SetText(element.desc)
+				tmp_desc:SetFont(SharedMedia:Fetch('font', 'Calibri Bold'), 9)
+				tmp_desc:SetWidth(parent.content:GetWidth()-10)
+				tmp_desc:SetJustifyH('LEFT')
+				push = tmp_desc:GetStringHeight() + 5
+			end
 			
 			if element.align then
 				tmp:SetJustifyH(strupper(element.align))
@@ -412,6 +474,10 @@ function buildElements(table, parent)
 			if element.key then
 				table.window.elements[element.key] = tmp
 			end
+
+		elseif element.type == 'spacer' then
+
+			-- NOTHING!
 
 		end
 
@@ -427,10 +493,14 @@ function buildElements(table, parent)
 			offset = offset + -(element.offset) - (element.size or 10)
 		elseif element.type == 'button' then
 			offset = offset + -20
+		elseif element.type == 'spacer' then
+			offset = offset + -(element.size)
 		else
 			offset = offset + -16
 		end
-		
+
+		offset = offset + -(push)
+		offset = offset + pull
 		
 	end
 
@@ -490,11 +560,11 @@ function ProbablyEngine.interface.buildGUI(config)
 
 end
 
---[[ProbablyEngine.timer.register('gui', function()
+ProbablyEngine.timer.register('gui', function()
 	ProbablyEngine.interface.buildGUI(test_config)
 	ProbablyEngine.timer.unregister('gui')
 end, 200)
-
+--[[
 local windowRef = ProbablyEngine.interface.buildGUI(test_data)
 
 function updatePositions()
