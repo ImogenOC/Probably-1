@@ -143,7 +143,26 @@ local test_config = {
 			end
 		},
 }}
+local test_nest
 
+test_nest = {
+	title = "Sub Windows",
+	subtitle = "Wooo!",
+	width = 200,
+	height = 60,
+	resize = false,
+	config = {
+		{
+			type = "button",
+			text = "Open Window",
+			width = 180,
+			height = 20,
+			callback = function()
+				ProbablyEngine.interface.buildGUI(test_nest)
+			end
+		}
+	}
+}
 
 local buttonStyleSheet = {
 	['frame-color'] = {	
@@ -515,6 +534,7 @@ function ProbablyEngine.interface.buildGUI(config)
 	local window = DiesalGUI:Create('ScrollFrame')
 	window:SetParent(parent.content)
 	window:SetAllPoints(parent.content)
+	window.parent = parent
 
 	if not config.color then config.color = "ee2200" end
 
@@ -565,6 +585,8 @@ ProbablyEngine.timer.register('gui', function()
 	ProbablyEngine.timer.unregister('gui')
 end, 200)
 
+
+
 local windowRef = ProbablyEngine.interface.buildGUI(test_data)
 
 function updatePositions()
@@ -575,6 +597,55 @@ function updatePositions()
 end
 
 C_Timer.NewTicker(0.01, updatePositions, nil)
+
+ProbablyEngine.interface.buildGUI(test_nest)
+
+
+local casting = {
+	title = "ProbablyEngine",
+	subtitle = "Current Spell",
+	width = 250,
+	height = 70,
+	resize = false,
+	config = {
+		{
+			type = "text",
+			text = "Current Spell: ",
+			size = 14,
+			offset = -14
+		},
+		{
+			key = 'current',
+			type = "text",
+			text = "Random",
+			size = 14,
+			align = "right",
+			offset = 5,
+		},
+		{
+			type = "text",
+			text = "Last Spell: ",
+			size = 14,
+			offset = -14
+		},
+		{
+			key = 'last',
+			type = "text",
+			text = "Random",
+			size = 14,
+			align = "right",
+		},
+	}
+}
+
+local windowRef = ProbablyEngine.interface.buildGUI(casting)
+
+function updateSpell()
+	windowRef.elements.current:SetText(ProbablyEngine.current_spell or 'Idle')
+	windowRef.elements.last:SetText(ProbablyEngine.parser.lastCast or 'Idle')
+end
+
+C_Timer.NewTicker(0.01, updateSpell, nil)
 ]]
 
 ProbablyEngine.interface.init = function()
