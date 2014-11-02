@@ -535,7 +535,7 @@ function ProbablyEngine.interface.buildGUI(config)
 		parent:SetEventListener('OnDragStop', function(self, event, left, top)
 			ProbablyEngine.config.write(config.key .. '_windowPos', {left, top})
 		end)
-		local left, top = unpack(ProbablyEngine.config.read(config.key .. '_windowPos'))
+		local left, top = unpack(ProbablyEngine.config.read(config.key .. '_windowPos', {false, false}))
 		if left and top then
 			parent.settings.left = left
 			parent.settings.top = top
