@@ -531,6 +531,19 @@ function ProbablyEngine.interface.buildGUI(config)
 	parent:SetWidth(config.width or 200)
 	parent:SetHeight(config.height or 300)
 
+	if config.key then
+		parent:SetEventListener('OnDragStop', function(self, event, left, top)
+			ProbablyEngine.config.write(config.key .. '_windowPos', {left, top})
+		end)
+		local left, top = unpack(ProbablyEngine.config.read(config.key .. '_windowPos'))
+		if left and top then
+			parent.settings.left = left
+			parent.settings.top = top
+			parent:UpdatePosition()
+		end
+	end
+	
+
 	local window = DiesalGUI:Create('ScrollFrame')
 	window:SetParent(parent.content)
 	window:SetAllPoints(parent.content)
