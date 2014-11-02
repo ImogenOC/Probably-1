@@ -513,7 +513,7 @@ function buildElements(table, parent)
 		elseif element.type == 'button' then
 			offset = offset + -20
 		elseif element.type == 'spacer' then
-			offset = offset + -(element.size)
+			offset = offset + -(element.size or 10)
 		else
 			offset = offset + -16
 		end
