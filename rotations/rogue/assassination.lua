@@ -4,26 +4,30 @@ ProbablyEngine.rotation.register(259, {
   --------------------
   -- Start Rotation --
   --------------------
-  
-  -- Buffs
-  { "Deadly Poison", "!player.buff(Deadly Poison)" },
-  { "Leeching Poison", "!player.buff(Leeching Poison)" },
 
   -- Interrupts
   { "Kick", "modifier.interrupts" },
 
   -- Cooldowns
-  { "Shadow Blades", "modifier.cooldowns" },
   { "Vendetta", "modifier.cooldowns" },
+
+  -- Multitarget
+  { "Crimson Tempest", {
+    "modifier.multitarget", 
+    "player.combopoints = 5", 
+    "target.range",
+  }},
+
+  { "Fan of Knives", { "modifier.multitarget", "player.combopoints <= 4" }},
 
   -- Rotation
   { "Slice and Dice", {  
     "!player.buff(Slice and Dice)", 
-    "player.combopoints >= 2",
+    "player.combopoints >= 1",
   }},
   
   { "Rupture", { 
-    "target.debuff(Rupture).duration <= 8", 
+    "target.debuff(Rupture).duration <= 7", 
     "player.combopoints = 5",
   }},
   
@@ -36,5 +40,14 @@ ProbablyEngine.rotation.register(259, {
   ------------------
   -- End Rotation --
   ------------------
+
+},{
+
+-- Buffs
+{ "Deadly Poison", "player.buff(Deadly Poison).duration <= 900" },
+{ "Leeching Poison", "player.buff(Leeching Poison).duration <= 900" },
+
+{ "Deadly Poison", "!player.buff(Deadly Poison)" },
+{ "Leeching Poison", "!player.buff(Leeching Poison)" },
 
 })
