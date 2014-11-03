@@ -8,14 +8,6 @@ ProbablyEngine.rotation.register(261, {
   -- Interrupts
   { "Kick", "modifier.interrupts" },
   
-  -- Buffs
-  { "Deadly Poison", { 
-    "!player.buff(Deadly Poison)", 
-    "!player.moving",
-  }},
-  
-  { "Leeching Poison", "!player.buff(Leeching Poison)" },
-  
   -- Cooldowns
   { "Shadow Blades", "modifier.cooldowns" },
   
@@ -23,26 +15,33 @@ ProbablyEngine.rotation.register(261, {
     "!player.buff(Slice and Dice)", 
     "player.combopoints = 5",
   }},
-  
+  -- Because why not
+  { "Ambush" },
+
   { "Vanish", { 
     "!player.buff(Shadow Dance)", 
     "modifier.cooldowns",
   }},
+
+  { "Preparation", {
+    "player.spell(Vanish).cooldown",
+  }},
   
+  -- Multitarget
+  { "Crimson Tempest", {
+    "modifier.multitarget", 
+    "player.combopoints = 5", 
+    "target.range",
+  }},
+
+  { "Fan of Knives", { "modifier.multitarget", "player.combopoints <= 4" }},
+
   -- Rotation
   { "Eviscerate", "player.combopoints = 5" },
-  { "Hemorrhage", "target.debuff(Hemorrhage).duration <= 4" },
-  {{ -- Greater than 5 CP
-  { "Fan of Knives", "modifier.multitarget" },
-  { "Backstab", "player.behind" },
-  { "Hemorrhage", "!player.behind" },
-  
-  { "Hemorrhage", { 
-    "!player.spell(Backstab).exists", 
-    "player.behind",
-  }},
-  }, "player.combopoints < 5" },
-  
+  { "Ambush", "player.combopoints <= 3" },
+  { "Hemorrhage", "target.debuff(Hemorrhage).duration <= 7" },
+  { "Hemorrhage", "!target.debuff(Hemorrhage)" },
+  { "Backstab", { "player.combopoints <= 4", "player.behind" }},
   ------------------
   -- End Rotation --
   ------------------
@@ -53,16 +52,18 @@ ProbablyEngine.rotation.register(261, {
   -- OOC Begin --
   ---------------
   
-  { "Deadly Poison", { 
-    "!player.buff(Deadly Poison)", 
-    "!player.moving",
-  }},
-  
-  { "Ambush", { 
-    "player.buff(Stealth)", 
-    "target.spell(Ambush).range" 
-  }, "target" },
-  
+-- Buffs
+{ "Deadly Poison", "player.buff(Deadly Poison).duration <= 900" },
+{ "Leeching Poison", "player.buff(Leeching Poison).duration <= 900" },
+
+{ "Deadly Poison", "!player.buff(Deadly Poison)" },
+{ "Leeching Poison", "!player.buff(Leeching Poison)" },
+
+-- Vanish Handle
+{ "Ambush",{
+  "player.buff(Vanish)",
+  "target.debuff(Rupture)",
+}},
   -------------
   -- OOC End --
   -------------
