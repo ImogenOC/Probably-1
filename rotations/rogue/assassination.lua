@@ -11,7 +11,15 @@ ProbablyEngine.rotation.register(259, {
 
   -- Interrupts
   { "Kick", "modifier.interrupts" },
+  
+  -- Multitarget
+  { "Crimson Tempest", {
+    "modifier.multitarget", 
+    "player.combopoints = 5", 
+    "target.range",
+  }},
 
+  { "Fan of Knives", { "modifier.multitarget", "player.combopoints <= 4" }},
   -- Cooldowns
   { "Shadow Blades", "modifier.cooldowns" },
   { "Vendetta", "modifier.cooldowns" },
