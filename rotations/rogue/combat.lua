@@ -1,75 +1,98 @@
 -- SPEC ID 260
 ProbablyEngine.rotation.register(260, {
 
-  --------------------
-  -- Start Rotation --
-  --------------------
+--------------------
+-- Start Rotation --
+--------------------
   
-  -- Buffs
-  { "Deadly Poison", "!player.buff(Deadly Poison)" },
-  { "Leeching Poison", "!player.buff(Leeching Poison)" },
+-- Buffs
+{ "Deadly Poison", "!player.buff(Deadly Poison)" },
+{ "Leeching Poison", "!player.buff(Leeching Poison)" },
 
-  -- Interrupts
-  { "Kick", "modifier.interrupts" },
+-- Interrupts
+{ "Kick", "modifier.interrupts" },
 
-  -- Cooldowns
-  { "Adrenaline Rush", "modifier.cooldowns" },
+-- Cooldowns
+{ "Adrenaline Rush", {
+  "modifier.cooldowns",
+  "player.buff(Deep Insight)",
+}},
   
-  { "Killing Spree", { 
-    "modifier.cooldowns", 
-    "player.energy <= 20", 
-    "!player.buff(Adrenaline Rush)",
-  }},
+{ "Killing Spree", { 
+  "modifier.cooldowns", 
+  "player.energy <= 35", 
+  "!player.buff(Adrenaline Rush)",
+  "player.buff(Moderate Insight)",
+}},
   
-  { "Shadow Blades", { 
-    "modifier.cooldowns", 
-    "player.buff(Adrenaline Rush)",
-  }},
+{ "Shadow Blades", { 
+  "modifier.cooldowns", 
+  "player.buff(Adrenaline Rush)",
+}},
 
-  -- Blade Flurry
-  { "Blade Flurry", { 
-    "!modifier.multitarget", 
-    "player.buff(Blade Flurry)",
-  }},
+-- Blade Flurry
+{ "Blade Flurry", { 
+  "!modifier.multitarget", 
+  "player.buff(Blade Flurry)",
+}},
   
-  { "Blade Flurry", { 
-    "modifier.multitarget", 
-    "!player.buff(Blade Flurry)",
-  }},
+{ "Blade Flurry", { 
+  "modifier.multitarget", 
+  "!player.buff(Blade Flurry)",
+}},
 
-  -- Rotation
-  { "Marked for Death", "player.combopoints = 0" },
+-- Rotation
+{ "Marked for Death", "player.combopoints = 0" },
   
-  { "Slice and Dice", { 
-    "player.buff(Slice and Dice)", 
-    "player.combopoints = 5",
-  }},
+{ "Slice and Dice", { 
+  "player.buff(Slice and Dice).duration <= 7", 
+  "player.combopoints = 5",
+}},
   
-  { "Revealing Strike", "target.debuff(Revealing Strike).duration <= 6" },
+
+{ "Slice and Dice", { 
+  "!player.buff(Slice and Dice)", 
+  "player.combopoints = 5",
+}},
   
-  { "Rupture", { 
-    "target.debuff(Rupture).duration <= 8", 
-    "player.combopoints = 5",
-  }},
+{ "Revealing Strike", "target.debuff(Revealing Strike).duration <= 6" },
   
-  { "Eviscerate", "player.combopoints = 5" },
-  { "Fan of Knives", "modifier.multitarget" },
-  { "Sinister Strike" },
+{ "Rupture", { 
+  "target.debuff(Rupture).duration <= 8", 
+  "player.combopoints = 5",
+}},
   
-  ------------------
-  -- End Rotation --
-  ------------------
+{ "Eviscerate", "player.combopoints = 5" },
+{ "Sinister Strike" },
+  
+------------------
+-- End Rotation --
+------------------
 
 },{
 
-  ---------------
-  -- OOC Begin --
-  ---------------
+---------------
+-- OOC Begin --
+---------------
   
-  { "Deadly Poison", "!player.buff(Deadly Poison)" },
-  { "Leeching Poison", "!player.buff(Leeching Poison)" },
+-- Buffs
+{ "Deadly Poison", "player.buff(Deadly Poison).duration <= 900" },
+{ "Leeching Poison", "player.buff(Leeching Poison).duration <= 900" },
+
+{ "Deadly Poison", "!player.buff(Deadly Poison)" },
+{ "Leeching Poison", "!player.buff(Leeching Poison)" },
+
+ { "Blade Flurry", { 
+ "!modifier.multitarget", 
+ "player.buff(Blade Flurry)",
+}},
   
-  -------------
-  -- OOC End --
-  -------------
+{ "Blade Flurry", { 
+ "modifier.multitarget", 
+ "!player.buff(Blade Flurry)",
+}},
+
+-------------
+-- OOC End --
+-------------
 })
